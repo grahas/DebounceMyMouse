@@ -39,7 +39,7 @@ namespace DebounceMyMouse
             {
                 if (desktop.Windows.FirstOrDefault(w => w is MainWindow) is not MainWindow mainWindow)
                 {
-                    mainWindow = new MainWindow(Config);
+                    mainWindow = new MainWindow();
                     desktop.MainWindow = mainWindow;
                     mainWindow.Show();
                 }
