@@ -1,33 +1,24 @@
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="DebounceMyMouse.App"
-             xmlns:local="using:DebounceMyMouse"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+<Application
+    x:Class="DebounceMyMouse.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DebounceMyMouse"
+    RequestedThemeVariant="Default">
+    <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <local:ViewLocator />
     </Application.DataTemplates>
-	
-	<TrayIcon.Icons>
-		<TrayIcons>
-			<TrayIcon Icon="/Assets/icon.ico"
-					  ToolTipText="DebounceMyMouse is running">
-				<TrayIcon.Menu>
-					<NativeMenu>
-						<NativeMenuItem Header="Settings">
-							<NativeMenu>
-								<NativeMenuItem Header="Open Settings" Click="OnOpenSettings" />
-								<NativeMenuItemSeparator />
-								<NativeMenuItem Header="Exit" Click="OnExitApp" />
-							</NativeMenu>
-						</NativeMenuItem>
-					</NativeMenu>
-				</TrayIcon.Menu>
-			</TrayIcon>
-		</TrayIcons>
-	</TrayIcon.Icons>
-	
+
+    <TrayIcon.Icons>
+        <TrayIcons>
+            <TrayIcon
+                Clicked="OnOpenSettings"
+                Icon="/Assets/icon.ico"
+                ToolTipText="DebounceMyMouse is running" />
+        </TrayIcons>
+    </TrayIcon.Icons>
+
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>

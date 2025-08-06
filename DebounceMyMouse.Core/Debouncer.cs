@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
+namespace DebounceMyMouse.Core;
 public class Debouncer
 {
     private Stopwatch _timer = Stopwatch.StartNew();

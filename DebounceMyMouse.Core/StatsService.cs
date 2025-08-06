@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 
+namespace DebounceMyMouse.Core;
 public class StatsService
 {
     public List<long> Intervals = new();

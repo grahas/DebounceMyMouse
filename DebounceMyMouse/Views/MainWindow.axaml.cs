@@ -5,6 +5,8 @@ using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using DebounceMyMouse.Core;
+using DebounceMyMouse.ViewModels;
 
 namespace DebounceMyMouse.Views
 {
@@ -17,9 +19,11 @@ namespace DebounceMyMouse.Views
         private MouseInputType _currentSelectedInput = MouseInputType.Left;
         public ObservableCollection<string> LogEntries { get; } = new();
 
-        public MainWindow()
+        public MainWindow(DebounceConfig config)
         {
             InitializeComponent();
+            InputConfigs = new ObservableCollection<InputConfig>(config.Inputs ?? new List<InputConfig>());
+            DataContext = new MainWindowViewModel(config)
             LogList.ItemsSource = LogEntries;
 
             foreach (MouseInputType input in Enum.GetValues(typeof(MouseInputType)))
@@ -65,6 +69,16 @@ namespace DebounceMyMouse.Views
             //    LogList.ItemsSource = channel.Logs;
             //    StatsDisplay.Text = $"[{input}] Count: {channel.Stats.BounceCount}, Avg: {channel.Stats.AverageInterval:F0} ms";
             //}
+        }
+        private void Save_Click(object? sender, RoutedEventArgs e)
+        {
+            var config = new DebounceConfig { Inputs = InputConfigs.ToList() };
+            config.Save("debounceConfig.json");
+        }
+
+        public static class MouseInputTypeEnumValues
+        {
+            public static IEnumerable<string> Values => Enum.GetNames(typeof(MouseInputType));
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -12,6 +13,7 @@ namespace DebounceMyMouse.ViewModels
         [ObservableProperty]
         private MouseInputType selectedInput;
 
-        public string Greeting { get; } = "Welcome to Avalonia!";
+        public ObservableCollection<InputConfig> InputConfigs { get; }
+
     }
 }

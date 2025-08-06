@@ -1,4 +1,5 @@
-﻿public enum MouseInputType
+﻿namespace DebounceMyMouse.Core;
+public enum MouseInputType
 {
     Left,
     Right,

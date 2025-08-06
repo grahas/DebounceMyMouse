@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
+namespace DebounceMyMouse.Core;
 public class MouseHook
 {
     public delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
@@ -9,7 +10,6 @@ public class MouseHook
     private static IntPtr _hookID = IntPtr.Zero;
     private static HookProc _proc;
 
-    public static event Action? OnMouseClick;
     public static event Action<MouseInputType>? OnInput;
 
     public static void Start()

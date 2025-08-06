@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
+namespace DebounceMyMouse.Core;
 public class DebounceChannel
 {
     public Debouncer Debouncer { get; set; }
