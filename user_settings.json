@@ -1,0 +1,19 @@
+{
+  "Inputs": [
+    {
+      "Name": "Left",
+      "DebounceMs": 300,
+      "IsEnabled": true
+    },
+    {
+      "Name": "Right",
+      "DebounceMs": 300,
+      "IsEnabled": true
+    },
+    {
+      "Name": "Middle",
+      "DebounceMs": 300,
+      "IsEnabled": true
+    }
+  ]
+}

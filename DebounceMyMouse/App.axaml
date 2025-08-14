@@ -1,3 +1,4 @@
+
 <Application
     x:Class="DebounceMyMouse.App"
     xmlns="https://github.com/avaloniaui"
@@ -15,7 +16,13 @@
             <TrayIcon
                 Clicked="OnOpenSettings"
                 Icon="/Assets/icon.ico"
-                ToolTipText="DebounceMyMouse is running" />
+                ToolTipText="DebounceMyMouse is running">
+                <TrayIcon.Menu>
+                    <NativeMenu>
+                        <NativeMenuItem Click="OnExitApp" Header="Quit" />
+                    </NativeMenu>
+                </TrayIcon.Menu>
+            </TrayIcon>
         </TrayIcons>
     </TrayIcon.Icons>
 

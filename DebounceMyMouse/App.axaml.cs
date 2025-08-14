@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices; // Add this for OS check
 using System.Linq;
 using System.Text.Json;
 using Avalonia;
@@ -8,26 +10,29 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using DebounceMyMouse.Core;
 using DebounceMyMouse.ViewModels;
 using DebounceMyMouse.Views;
-using System.IO;
-using DebounceMyMouse.Core;
-
 
 namespace DebounceMyMouse
 {
     public partial class App : Application
     {
         private DebounceBackgroundService? _backgroundService;
+        private MainWindowViewModel mainWindowViewModel;
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-        }
+            this.AttachDeveloperTools();
 
+        }
+        
         public override void OnFrameworkInitializationCompleted()
         {
-            var config = DebounceConfig.Load("debounceConfig.json");
-            _backgroundService = new DebounceBackgroundService(config);
+            _backgroundService = new DebounceBackgroundService();
+            mainWindowViewModel = new MainWindowViewModel(_backgroundService);
+            _backgroundService.OnMouseInputResults = mainWindowViewModel.AddMouseEventLog;
             _backgroundService.Start();
 
             base.OnFrameworkInitializationCompleted();
@@ -37,16 +42,23 @@ namespace DebounceMyMouse
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                if (desktop.Windows.FirstOrDefault(w => w is MainWindow) is not MainWindow mainWindow)
+                // Try to find the main window
+                var mainWindow = desktop.Windows.FirstOrDefault(w => w is MainWindow) as MainWindow;
+
+                if (mainWindow == null)
                 {
-                    mainWindow = new MainWindow();
+                    // If not found, create a new one
+                    mainWindow = new MainWindow
+                    {
+                        DataContext = mainWindowViewModel
+                    };
                     desktop.MainWindow = mainWindow;
-                    mainWindow.Show();
                 }
-                else
-                {
-                    mainWindow.Activate();
-                }
+
+                // Show and activate the window
+                mainWindow.Show();
+                mainWindow.WindowState = WindowState.Normal;
+                mainWindow.Activate();
             }
         }
 

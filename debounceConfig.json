@@ -1,0 +1,16 @@
+{
+  "Inputs": [
+    {
+      "Name": "Left",
+      "DebounceMs": 50
+    },
+    {
+      "Name": "Right",
+      "DebounceMs": 50
+    },
+    {
+      "Name": "MiddleDown",
+      "DebounceMs": 1000
+    }
+  ]
+}

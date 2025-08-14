@@ -1,14 +1,24 @@
-using System.Threading;
-using System.Threading.Tasks;
 namespace DebounceMyMouse.Core;
 public class DebounceBackgroundService
 {
     private CancellationTokenSource? _cts;
     private Task? _backgroundTask;
-    private readonly DebounceService _debounceService;
-
-    public DebounceBackgroundService(DebounceConfig config)
+    private DebounceService _debounceService;
+    public Action<MouseInputType, bool>? OnMouseInputResults;
+    private readonly string _configPath;
+    public DebounceConfig config { get; set; }
+    public DebounceBackgroundService(string configPath = null)
     {
+        // Use a safe, user-writable location for config
+        if (string.IsNullOrEmpty(configPath))
+        {
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var appFolder = Path.Combine(appData, "DebounceMyMouse");
+            Directory.CreateDirectory(appFolder);
+            configPath = Path.Combine(appFolder, "user_settings.json");
+        }
+        _configPath = configPath;
+        config = DebounceConfig.Load(_configPath);
         _debounceService = new DebounceService(config.Inputs ?? new List<InputConfig>());
     }
 
@@ -18,7 +28,17 @@ public class DebounceBackgroundService
             return; // Already running
 
         _cts = new CancellationTokenSource();
-        MouseHook.OnInput += OnMouseInput;
+        
+        // Assign callback functions
+        MouseHook.ShouldBlock += ShouldBlock;
+        if (OnMouseInputResults != null)
+        {
+            MouseHook.OnMouseInputResults += OnMouseInputResults;
+        }
+        else
+        {
+            MouseHook.OnMouseInputResults += (input, blocked) => _debounceService.GetStats(input.ToString())?.LogBounce();
+        }
         MouseHook.Start();
 
         _backgroundTask = Task.Run(async () =>
@@ -34,13 +54,25 @@ public class DebounceBackgroundService
     public void Stop()
     {
         _cts?.Cancel();
-        MouseHook.OnInput -= OnMouseInput;
+        MouseHook.ShouldBlock -= ShouldBlock;
+        MouseHook.OnMouseInputResults -= OnMouseInputResults;
         MouseHook.Stop();
+
+        // Save the stats to a file
+        _debounceService.SaveStats(_configPath);
     }
 
-    private void OnMouseInput(MouseInputType input)
+    public void ReloadConfig()
     {
-        _debounceService.HandleInput(input.ToString());
-        // Optionally: raise events, log, etc.
+        // Reload the configuration
+        config = DebounceConfig.Load(_configPath);
+        _debounceService = new DebounceService(config.Inputs ?? new List<InputConfig>());
+    }
+
+    private bool ShouldBlock(MouseInputType input)
+    {
+        bool results = _debounceService.ShouldBlock(input.ToString());
+
+        return results;
     }
 }
