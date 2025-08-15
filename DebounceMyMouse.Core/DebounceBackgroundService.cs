@@ -6,6 +6,7 @@ public class DebounceBackgroundService
     private DebounceService _debounceService;
     public Action<MouseInputType, bool>? OnMouseInputResults;
     private readonly string _configPath;
+    private readonly string _statsPath;
     public DebounceConfig config { get; set; }
     public DebounceBackgroundService(string configPath = null)
     {
@@ -16,11 +17,12 @@ public class DebounceBackgroundService
             var appFolder = Path.Combine(appData, "DebounceMyMouse");
             Directory.CreateDirectory(appFolder);
             configPath = Path.Combine(appFolder, "user_settings.json");
+            _statsPath = Path.Combine(appFolder, "user_stats.json");
         }
         _configPath = configPath;
         config = DebounceConfig.Load(_configPath);
         _debounceService = new DebounceService(config.Inputs ?? new List<InputConfig>());
-    }
+    }          
 
     public void Start()
     {
@@ -59,7 +61,7 @@ public class DebounceBackgroundService
         MouseHook.Stop();
 
         // Save the stats to a file
-        _debounceService.SaveStats(_configPath);
+        _debounceService.SaveStats(_statsPath);
     }
 
     public void ReloadConfig()

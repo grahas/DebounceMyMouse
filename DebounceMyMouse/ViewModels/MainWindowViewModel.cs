@@ -35,7 +35,6 @@ namespace DebounceMyMouse.ViewModels
             SaveCommand = new RelayCommand(SaveSettings);
             ClearLogCommand = new RelayCommand(ClearLog);
             LearnCommand = new RelayCommand(Learn);
-
         }
 
         private void SaveSettings()
