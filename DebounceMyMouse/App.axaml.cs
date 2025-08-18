@@ -1,13 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices; // Add this for OS check
 using System.Linq;
-using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using DebounceMyMouse.Core;

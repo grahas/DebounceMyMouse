@@ -14,10 +14,17 @@
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<PublishTrimmed>false</PublishTrimmed>
+		<StartupObject>DebounceMyMouse.Program</StartupObject>
+		<ApplicationIcon>Assets\mouse.ico</ApplicationIcon>
+		<PlatformTarget>AnyCPU</PlatformTarget>
 	</PropertyGroup>
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\mouse.ico" />
   </ItemGroup>
 
   <ItemGroup>

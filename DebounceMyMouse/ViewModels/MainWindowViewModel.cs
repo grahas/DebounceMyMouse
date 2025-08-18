@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DebounceMyMouse.Core;
-using DebounceMyMouse.ViewModels;
-using Microsoft.Extensions.Hosting;
 
 namespace DebounceMyMouse.ViewModels
 {

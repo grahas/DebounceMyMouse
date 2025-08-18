@@ -15,7 +15,7 @@
         <TrayIcons>
             <TrayIcon
                 Clicked="OnOpenSettings"
-                Icon="/Assets/icon.ico"
+                Icon="/Assets/mouse.ico"
                 ToolTipText="DebounceMyMouse is running">
                 <TrayIcon.Menu>
                     <NativeMenu>

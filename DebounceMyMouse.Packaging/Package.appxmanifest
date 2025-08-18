@@ -4,16 +4,17 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap rescap">
+  xmlns:uap18="http://schemas.microsoft.com/appx/manifest/uap/windows10/18"
+  IgnorableNamespaces="uap rescap uap18">
 
   <Identity
-    Name="d146dc74-6f62-4c28-81ac-77291f4fae11"
-    Publisher="CN=gupyf"
-    Version="1.0.0.0" />
+    Name="GrahamHarrison.DebounceMyMouse"
+    Publisher="CN=D49150B9-0838-429E-8132-CA11E3327CE7"
+    Version="1.0.12.0" />
 
   <Properties>
-    <DisplayName>DebounceMyMouse.Packaging</DisplayName>
-    <PublisherDisplayName>gupyf</PublisherDisplayName>
+    <DisplayName>Debounce My Mouse</DisplayName>
+    <PublisherDisplayName>Graham Harrison</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
@@ -29,21 +30,23 @@
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="$targetentrypoint$">
+      EntryPoint="$targetentrypoint$" uap18:TrustLevel="mediumIL" uap18:RuntimeBehavior="win32App">
       <uap:VisualElements
-        DisplayName="DebounceMyMouse.Packaging"
-        Description="DebounceMyMouse.Packaging"
+        DisplayName="Debounce My Mouse"
+        Description="Fix mice with double or tripple clickinig issues where one click creates two or three extra clicks."
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png" />
+        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png"  Square71x71Logo="Images\SmallTile.png" Square310x310Logo="Images\LargeTile.png">
+        </uap:DefaultTile >
         <uap:SplashScreen Image="Images\SplashScreen.png" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
       </uap:VisualElements>
     </Application>
   </Applications>
 
   <Capabilities>
-    <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
 </Package>
