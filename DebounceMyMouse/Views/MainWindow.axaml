@@ -78,6 +78,17 @@
                     Collect a bunch of samples and click learn to calculate the ideal time.
                     Click save when satisfied with values.
                 </TextBlock>
+
+                <!--  Settings  -->
+                <TextBlock
+                    Margin="0,5"
+                    FontSize="18"
+                    FontWeight="Bold">
+                    Settings
+                </TextBlock>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <!-- <CheckBox Content="Start with Windows" IsChecked="{Binding StartWithWindows}" />  -->
+                </StackPanel>
             </StackPanel>
         </Border>
         <!--  Logs  -->

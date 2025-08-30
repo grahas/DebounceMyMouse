@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DebounceMyMouse.Core;
 
@@ -21,7 +22,7 @@ namespace DebounceMyMouse.ViewModels
         public ICommand LearnCommand { get; }
         public ICommand SaveCommand { get; }
 
-        public MainWindowViewModel(DebounceBackgroundService backgroundService)
+        public MainWindowViewModel()
         {
             _backgroundService = backgroundService;
             DebounceConfig = _backgroundService.config;
