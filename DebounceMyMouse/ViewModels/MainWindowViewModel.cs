@@ -5,40 +5,73 @@ using System.Linq;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DebounceMyMouse.UI.Models;
 using DebounceMyMouse.Core;
 
-namespace DebounceMyMouse.ViewModels
+namespace DebounceMyMouse.UI.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public partial class MainWindowViewModel : ViewModelBase
     {
-        public ICommand IncrementDebounceCommand { get; }
-        public ICommand DecrementDebounceCommand { get; }
         public ObservableCollection<MouseEventLogEntry> MouseEventLogs { get; } = new();
-        public DebounceConfig? DebounceConfig { get; set; }
-        private readonly DebounceBackgroundService _backgroundService;
-        public ObservableCollection<InputConfig> Inputs { get; }
         private readonly Dictionary<string, DateTime> _lastEventTimestamps = new();
         public ICommand ClearLogCommand { get; }
         public ICommand LearnCommand { get; }
         public ICommand SaveCommand { get; }
 
+        public DebounceMyMouse.Core.DebounceMyMouse debounceMyMouse = new();
+
+        [ObservableProperty]
+        private bool launchOnStartup;
+
+        public ObservableCollection<Input> Inputs { get; set; } = new()
+        {
+            new Input("Left", 200, true),
+            new Input("Right", 200, true),
+            new Input("Middle", 200, true)
+        };
+
         public MainWindowViewModel()
         {
-            _backgroundService = backgroundService;
-            DebounceConfig = _backgroundService.config;
-            Inputs = new ObservableCollection<InputConfig>(DebounceConfig.Inputs);
-            IncrementDebounceCommand = new RelayCommand<InputConfig>(input => input.DebounceMs += 1);
-            DecrementDebounceCommand = new RelayCommand<InputConfig>(input => { if (input.DebounceMs > 1) input.DebounceMs -= 1; });
             SaveCommand = new RelayCommand(SaveSettings);
             ClearLogCommand = new RelayCommand(ClearLog);
             LearnCommand = new RelayCommand(Learn);
+
+            // Load settings, if setting isn't found, use default value and disable it
+            foreach (var input in Inputs)
+            {
+                var setting = debounceMyMouse.Settings.Channels
+                    .FirstOrDefault(c => c.Name.Equals(input.Name, StringComparison.OrdinalIgnoreCase));
+                if (setting != null)
+                {
+                    input.DebounceMs = (int)setting.Timeout.TotalMilliseconds;
+                    input.IsEnabled = true;
+                }
+                else
+                {
+                    input.DebounceMs = 200; // default value
+                    input.IsEnabled = false;
+                }
+            }
+
+            // Initialize LaunchOnStartup from settings
+            LaunchOnStartup = debounceMyMouse.Settings.LaunchOnStartup;
         }
 
         private void SaveSettings()
         {
-            DebounceConfig.Save("user_settings.json");
-            _backgroundService.ReloadConfig();
+            // Update settings from Inputs collection, only add enabled inputs
+            debounceMyMouse.Settings.Channels = Inputs
+                .Where(i => i.IsEnabled)
+                .Select(i => new ChannelSetting(i.Name, TimeSpan.FromMilliseconds(i.DebounceMs)))
+                .ToList();
+
+            // Persist LaunchOnStartup to settings
+            debounceMyMouse.Settings.LaunchOnStartup = LaunchOnStartup;
+
+            debounceMyMouse.Settings.Save();
+            debounceMyMouse.ApplySettings();
         }
+
         private void ClearLog()
         {
             MouseEventLogs.Clear();
@@ -71,53 +104,33 @@ namespace DebounceMyMouse.ViewModels
             }
         }
 
-        public class MouseEventLogEntry
-        {
-            public DateTime Timestamp { get; set; }
-            public string InputType { get; set; }
-            public bool IsBlocked { get; set; }
-            public TimeSpan? Delta { get; set; }
-
-            public string LogMessage {
-                get
-                {
-                    string results = $"{Timestamp:HH:mm:ss.fff} - {InputType}";
-                    if (IsBlocked && Delta.HasValue)
-                        results += $" (Δ {Delta.Value.TotalMilliseconds:0} ms)";
-                    return results;
-                }
-            }
-
-            public string BackgroundColor => IsBlocked ? "#FFFFCCCC" : "White";
-        }
-
-        public void AddMouseEventLog(MouseInputType mouseInputType, bool isBlocked)
+        public void AddMouseEventLog(string input, bool isBlocked)
         {
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
                 DateTime now = DateTime.Now;
-                string inputType = mouseInputType.ToString();
                 TimeSpan? delta = null;
 
-                // Only log if the input is enabled
-                var config = Inputs.FirstOrDefault(i => i.Name == inputType);
-                if (config == null || !config.IsEnabled)
-                    return;
-
-                if (_lastEventTimestamps.TryGetValue(inputType, out var lastTimestamp))
+                if (_lastEventTimestamps.TryGetValue(input, out var lastTimestamp))
                     delta = now - lastTimestamp;
 
                 var entry = new MouseEventLogEntry
                 {
                     Timestamp = now,
-                    InputType = inputType,
+                    InputType = input,
                     IsBlocked = isBlocked,
                     Delta = isBlocked ? delta : null // Only set delta for blocked events
                 };
 
                 MouseEventLogs.Add(entry);
-                _lastEventTimestamps[inputType] = now;
+                _lastEventTimestamps[input] = now;
             });
+        }
+
+        // Keep settings in sync when LaunchOnStartup changes
+        partial void OnLaunchOnStartupChanged(bool value)
+        {
+            debounceMyMouse.Settings.LaunchOnStartup = value;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using Avalonia;
 
-namespace DebounceMyMouse
+namespace DebounceMyMouse.UI
 {
     internal sealed class Program
     {

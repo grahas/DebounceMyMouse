@@ -1,10 +1,10 @@
 <Window
-    x:Class="DebounceMyMouse.Views.MainWindow"
+    x:Class="DebounceMyMouse.UI.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:DebounceMyMouse.ViewModels"
+    xmlns:vm="using:DebounceMyMouse.UI.ViewModels"
     Title="DebounceMyMouse"
     Width="600"
     Height="600"
@@ -43,7 +43,7 @@
                                 Margin="0,8"
                                 Orientation="Horizontal"
                                 Spacing="8">
-                                <CheckBox Content="{Binding Name}" IsChecked="{Binding IsEnabled}" />
+                                <CheckBox Content="{Binding Name}" IsChecked="{Binding IsEnabled, Mode=TwoWay}" />
                                 <NumericUpDown
                                     Width="120"
                                     FormatString="N0"
@@ -52,7 +52,7 @@
                                     Maximum="1000"
                                     Minimum="0"
                                     ParsingNumberStyle="Integer"
-                                    Value="{Binding DebounceMs}" />
+                                    Value="{Binding DebounceMs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 <TextBlock VerticalAlignment="Center" Text="ms" />
                             </StackPanel>
                         </DataTemplate>
@@ -87,7 +87,7 @@
                     Settings
                 </TextBlock>
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <!-- <CheckBox Content="Start with Windows" IsChecked="{Binding StartWithWindows}" />  -->
+                    <CheckBox Content="Automatic Startup" IsChecked="{Binding LaunchOnStartup}" />
                 </StackPanel>
             </StackPanel>
         </Border>

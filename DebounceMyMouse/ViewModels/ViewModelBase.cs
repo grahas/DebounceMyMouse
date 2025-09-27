@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace DebounceMyMouse.ViewModels
+namespace DebounceMyMouse.UI.ViewModels
 {
     public class ViewModelBase : ObservableObject
     {

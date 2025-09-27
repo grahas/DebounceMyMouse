@@ -10,8 +10,7 @@ public class MouseHook
     private static IntPtr _hookID = IntPtr.Zero;
     private static HookProc _proc;
 
-    public static event Func<MouseInputType, bool>? ShouldBlock;
-    public static event Action<MouseInputType, bool>? OnMouseInputResults; // the bool is if the input was blocked
+    public static event Func<string, bool>? ShouldBlock;
 
     public static void Start()
     {
@@ -37,26 +36,19 @@ public class MouseHook
         if (nCode >= 0)
         {
             int msg = wParam.ToInt32();
-            MouseInputType? input = msg switch
+            string? input = msg switch
             {
-                0x0201 => MouseInputType.Left,
-                0x0204 => MouseInputType.Right,
-                0x0207 => MouseInputType.Middle,
-                //0x020A => MouseInputType.WheelUp,    // Mouse wheel
-                //0x020B => MouseInputType.WheelDown,
+                0x0201 => "Left",
+                0x0204 => "Right",
+                0x0207 => "Middle",
                 _ => null
             };
             if (input is not null)
             {
                 // Check if the input should be blocked
-                if (ShouldBlock?.Invoke(input.Value) == true)
+                if (ShouldBlock?.Invoke(input) == true)
                 {
-                    OnMouseInputResults?.Invoke(input.Value, true);
                     return (IntPtr)1; // Block the event
-                }
-                else
-                {
-                    OnMouseInputResults?.Invoke(input.Value, false);
                 }
             }
         }

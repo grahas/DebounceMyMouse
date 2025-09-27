@@ -1,9 +1,9 @@
 
 <Application
-    x:Class="DebounceMyMouse.App"
+    x:Class="DebounceMyMouse.UI.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:DebounceMyMouse"
+    xmlns:local="using:DebounceMyMouse.UI"
     RequestedThemeVariant="Default">
     <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 

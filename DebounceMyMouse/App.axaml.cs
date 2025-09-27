@@ -6,29 +6,47 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using DebounceMyMouse.Core;
-using DebounceMyMouse.ViewModels;
-using DebounceMyMouse.Views;
+using DebounceMyMouse.UI.ViewModels;
+using DebounceMyMouse.UI.Views;
+using DebounceMyMouse.Core;
 
-namespace DebounceMyMouse
+namespace DebounceMyMouse.UI
 {
     public partial class App : Application
     {
-        private DebounceBackgroundService? _backgroundService;
         private MainWindowViewModel mainWindowViewModel;
 
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
             this.AttachDeveloperTools();
-
         }
         
         public override void OnFrameworkInitializationCompleted()
         {
-            _backgroundService = new DebounceBackgroundService();
-            mainWindowViewModel = new MainWindowViewModel(_backgroundService);
-            _backgroundService.OnMouseInputResults = mainWindowViewModel.AddMouseEventLog;
-            _backgroundService.Start();
+            mainWindowViewModel = new MainWindowViewModel();
+
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                // Keep app running when no windows are open (tray-only scenario).
+                desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+                var args = desktop.Args ?? Array.Empty<string>();
+                bool HasArg(string v) => args.Any(a => string.Equals(a, v, StringComparison.OrdinalIgnoreCase));
+
+                var mainWindow = new MainWindow
+                {
+                    DataContext = mainWindowViewModel
+                };
+                desktop.MainWindow = mainWindow;
+
+                // Check if the window should start minimized
+                if (HasArg("--minimized") == false)
+                {
+                    mainWindow.Show();
+                    mainWindow.Activate();
+                }
+            }
 
             base.OnFrameworkInitializationCompleted();
         }
@@ -62,11 +80,9 @@ namespace DebounceMyMouse
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 // Stop the background service
-                _backgroundService?.Stop();
                 desktop.Shutdown();
             }
         }
-
 
         private void DisableAvaloniaDataAnnotationValidation()
         {
