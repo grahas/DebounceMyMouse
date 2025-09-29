@@ -37,7 +37,7 @@ namespace DebounceMyMouse.Core
 
             // Hook the mouse events
             MouseHook.ShouldBlock += ShouldBlock;
-            //MouseHook.Start();
+            MouseHook.Start();
         }
 
         ~DebounceMyMouse()
