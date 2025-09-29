@@ -1,12 +1,14 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using DebounceMyMouse.Core;
+using DebounceMyMouse.UI.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using DebounceMyMouse.UI.Models;
-using DebounceMyMouse.Core;
+using Windows.ApplicationModel;
 
 namespace DebounceMyMouse.UI.ViewModels
 {
@@ -22,6 +24,7 @@ namespace DebounceMyMouse.UI.ViewModels
 
         [ObservableProperty]
         private bool launchOnStartup;
+        private bool _suppressLaunchChange;
 
         public ObservableCollection<Input> Inputs { get; set; } = new()
         {
@@ -130,7 +133,51 @@ namespace DebounceMyMouse.UI.ViewModels
         // Keep settings in sync when LaunchOnStartup changes
         partial void OnLaunchOnStartupChanged(bool value)
         {
-            debounceMyMouse.Settings.LaunchOnStartup = value;
+            if (_suppressLaunchChange) return;          // prevent loops
+            _ = ApplyLaunchOnStartupAsync(value);       // fire-and-forget
+        }
+
+        private async Task ApplyLaunchOnStartupAsync(bool requested)
+        {
+            // MSIX only; bail out cleanly when unpackaged
+            if (!StartupToggle.IsSupported())
+            {
+                await StartupToggle.DisableAsync();
+                await ReflectAsync(false);
+                return;
+            }
+
+            bool enabled;
+            if (requested)
+            {
+                // May prompt; returns false if DisabledByUser/Policy
+                enabled = await StartupToggle.EnableAsync();
+                if (!enabled && await StartupToggle.GetStateAsync() == StartupTaskState.DisabledByUser)
+                {
+                    // optionally notify user to re-enable in Settings > Apps > Startup
+                }
+            }
+            else
+            {
+                await StartupToggle.DisableAsync();
+                enabled = false;
+            }
+
+            await ReflectAsync(enabled);
+        }
+
+        private Task ReflectAsync(bool actual)
+        {
+            // update settings and UI without re-entering the callback
+            debounceMyMouse.Settings.LaunchOnStartup = actual;
+
+            if (LaunchOnStartup != actual)
+            {
+                _suppressLaunchChange = true;
+                LaunchOnStartup = actual;
+                _suppressLaunchChange = false;
+            }
+            return Task.CompletedTask;
         }
     }
 }

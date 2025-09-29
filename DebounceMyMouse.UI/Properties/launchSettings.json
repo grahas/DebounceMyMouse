@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DebounceMyMouse.UI": {
+      "commandName": "Project",
+      "commandLineArgs": "--minimized"
+    }
+  }
+}

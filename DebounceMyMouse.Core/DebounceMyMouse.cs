@@ -17,7 +17,7 @@ namespace DebounceMyMouse.Core
         public DebounceMyMouse() 
         {
             // Read the settings from disk
-            Settings = AppSettings.Load();
+            Settings = AppSettings.Load("Settings", "DebounceMyMouse");
 
             // If first run, set some defaults
             if (Settings.IsFirstRun)
@@ -37,7 +37,7 @@ namespace DebounceMyMouse.Core
 
             // Hook the mouse events
             MouseHook.ShouldBlock += ShouldBlock;
-            MouseHook.Start();
+            //MouseHook.Start();
         }
 
         ~DebounceMyMouse()

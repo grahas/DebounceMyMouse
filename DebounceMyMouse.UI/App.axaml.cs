@@ -8,7 +8,6 @@ using Avalonia.Markup.Xaml;
 using DebounceMyMouse.Core;
 using DebounceMyMouse.UI.ViewModels;
 using DebounceMyMouse.UI.Views;
-using DebounceMyMouse.Core;
 
 namespace DebounceMyMouse.UI
 {
@@ -34,17 +33,18 @@ namespace DebounceMyMouse.UI
                 var args = desktop.Args ?? Array.Empty<string>();
                 bool HasArg(string v) => args.Any(a => string.Equals(a, v, StringComparison.OrdinalIgnoreCase));
 
-                var mainWindow = new MainWindow
+                // Check if the window should start minimized/hidden
+                if (HasArg("--minimized"))
                 {
-                    DataContext = mainWindowViewModel
-                };
-                desktop.MainWindow = mainWindow;
 
-                // Check if the window should start minimized
-                if (HasArg("--minimized") == false)
+                }
+                else
                 {
-                    mainWindow.Show();
-                    mainWindow.Activate();
+                    var mainWindow = new MainWindow
+                    {
+                        DataContext = mainWindowViewModel
+                    };
+                    desktop.MainWindow = mainWindow;
                 }
             }
 
@@ -69,6 +69,7 @@ namespace DebounceMyMouse.UI
                 }
 
                 // Show and activate the window
+                mainWindow.ShowInTaskbar = true;
                 mainWindow.Show();
                 mainWindow.WindowState = WindowState.Normal;
                 mainWindow.Activate();

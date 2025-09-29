@@ -4,13 +4,14 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
   xmlns:uap18="http://schemas.microsoft.com/appx/manifest/uap/windows10/18"
-  IgnorableNamespaces="uap rescap uap18">
+  IgnorableNamespaces="uap rescap uap18 uap5">
 
   <Identity
     Name="GrahamHarrison.DebounceMyMouse"
-    Publisher="CN=D49150B9-0838-429E-8132-CA11E3327CE7"
-    Version="1.0.12.0" />
+    Publisher="CN=gupyf"
+    Version="1.0.41.0" />
 
   <Properties>
     <DisplayName>Debounce My Mouse</DisplayName>
@@ -33,7 +34,7 @@
       EntryPoint="$targetentrypoint$" uap18:TrustLevel="mediumIL" uap18:RuntimeBehavior="win32App">
       <uap:VisualElements
         DisplayName="Debounce My Mouse"
-        Description="Fix mice with double or tripple clickinig issues where one click creates two or three extra clicks."
+        Description="Fixes computer mice with double or tripple clicking issues where one click creates two or three extra clicks."
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">
@@ -43,6 +44,15 @@
         <uap:InitialRotationPreference>
           <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
       </uap:VisualElements>
+		<Extensions>
+			<uap5:Extension Category="windows.startupTask"
+							Executable="DebounceMyMouse.Launcher/DebounceMyMouse.Launcher.exe"
+							EntryPoint="Windows.FullTrustApplication">
+				            <uap5:StartupTask TaskId="DebounceMyMouse_Startup"
+								  Enabled="false"
+								  DisplayName="Debounce My Mouse" />
+			</uap5:Extension>
+		</Extensions>
     </Application>
   </Applications>
 
